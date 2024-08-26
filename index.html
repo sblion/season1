@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Gowun Dodum', sans-serif;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 400px;
+        }
+
+        .form-control {
+            background-color: transparent;
+            color: white;
+            border-color: white;
+        }
+
+        .form-control:focus {
+            background-color: black;
+            color: white;
+            box-shadow: none;
+            border-color: yellow;
+        }
+
+        .btn-custom {
+            background-color: red;
+            border: none;
+        }
+
+        .btn-custom:hover {
+            background-color: darkred;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="display-5 mb-4">로그인</h1>
+        <form>
+            <div class="mb-3">
+                <label for="schoolName" class="form-label">학교 이름</label>
+                <input type="text" class="form-control" id="schoolName" placeholder="학교 이름을 입력하세요">
+            </div>
+            <div class="mb-3">
+                <label for="studentID" class="form-label">학번</label>
+                <input type="text" class="form-control" id="studentID" placeholder="학번을 입력하세요">
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label">이름</label>
+                <input type="text" class="form-control" id="name" placeholder="이름을 입력하세요">
+            </div>
+            <button type="button" class="btn btn-custom mt-3" onclick="window.location.href = 'page1.html';">확인</button>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXlR0z4y0p/47B5yL2VZ0K5mZ1L3eMezF6QTY41iw35Yc8M9BEhPV1F7HE7f" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGhz6uFK4X16ZrGTJHeSnDcpIDxKwtwAzUCB0p9I2PnnnEGnDUrIM8Dcz7P" crossorigin="anonymous"></script>
+</body>
+
+</html>

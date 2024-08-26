@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mistery Lab Season.1</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+
+        * {
+            font-family: "Gowun Dodum", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        body {
+            background-color: black;
+        }
+
+        .image {
+            background-image: url('미스터리랩2.jpg');
+            background-position: center center;
+            background-size: 60%;
+            background-repeat: no-repeat;
+            height: 450px;
+        }
+
+        .main {
+            color: white;
+        }
+
+        .play,
+        .hint {
+            color: white;
+            width: 500px;
+            margin: 20px auto 20px auto;
+            border: 1px solid white;
+            padding: 20px;
+            display: none;
+        }
+
+        .stopwatch-container {
+            padding-bottom: 100px;
+            left: 50%;
+            transform: translateX(0%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 10px solid #fff;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .circle .time {
+            font-size: 2em;
+            color: #fff;
+        }
+
+        .circle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 10px solid yellow;
+            animation: countdown 3600s linear forwards;
+        }
+
+        @keyframes countdown {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .content {
+            padding-bottom: 300px;
+            /* 스톱워치 높이 + 여유 공간 */
+        }
+
+        .lives {
+            margin-left: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .lives i {
+            color: red;
+            font-size: 1.5em;
+            margin-right: 5px;
+        }
+    </style>
+    <script type="module">
+        // Firebase SDK 라이브러리 가져오기
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+
+        // Firebase 구성 정보 설정
+        const firebaseConfig = {
+            apiKey: "AIzaSyByT-lTQo3y1oRgzICAv0CCGio3uSsSq34",
+            authDomain: "zombie1-50e08.firebaseapp.com",
+            projectId: "zombie1-50e08",
+            storageBucket: "zombie1-50e08.appspot.com",
+            messagingSenderId: "73303480966",
+            appId: "1:73303480966:web:16b0bbd4e6381272004f07",
+            measurementId: "G-Y798KZ774D"
+        };
+
+
+        // Firebase 인스턴스 초기화
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+    </script>
+</head>
+
+<script>
+    let lives = 5;
+
+    function updateLives() {
+        const livesContainer = $('#lives');
+        livesContainer.empty();
+        for (let i = 0; i < lives; i++) {
+            livesContainer.append('<i class="bi bi-heart-fill"></i>');
+        }
+        if (lives === 0) {
+            alert('Game Over');
+            window.location.href = 'page2.html';
+        }
+
+    }
+
+    function openclose(section) {
+        $('.play, .hint').hide();
+        $('#' + section).toggle();
+    }
+
+    function displayHint() {
+        const hintInput = $('#hint_input').val();
+        let hintText = '';
+
+        switch (hintInput) {
+            case '10':
+                hintText = "힌트 10 : 창문을 통해 들어가려면 도구가 필요하다.";
+                hintText += "<br>추가 힌트 10: 창문을 부수고 들어갈 수 있는 도구와 결합해서 플레이칸에 입력해보자.";
+                break;
+            case '18':
+                hintText = "힌트 18 : 창문을 통해 들어가려면 도구가 필요하다.";
+                hintText += "<br>추가 힌트 18: 창문을 부수고 들어갈 수 있는 도구와 결합해서 플레이칸에 입력해보자.";
+                break;
+            case '36':
+                hintText = "힌트 36 : 창문을 통해 들어가려면 도구가 필요하다.";
+                hintText += "<br>추가 힌트 36: 창문을 부수고 들어갈 수 있는 도구와 결합해서 플레이칸에 입력해보자.";
+                break;
+            case '12':
+                hintText = "힌트 12 : 이 도끼가 있으면 무언가를 부수고 건물 안으로 들어갈 수 있을 것 같다.";
+                hintText += "<br>추가 힌트 12: 창문을 부수고 들어가보자. 좀비가 없는 창문을 잘 골라야 한다.";
+                break;
+            case '17':
+                hintText = "힌트 17 : 어떤 소화액인지 알고 싶으면 지시액들과 섞어보자.";
+                hintText += "<br>추가 힌트 17: ??";
+                break;
+            case '19':
+                hintText = "힌트 19 : 지시약을 소화액과 섞으면 어떤 소화액인지 알아낼 수 있다.";
+                hintText += "<br>추가 힌트 19: ??";
+                break;
+            case '20':
+                hintText = "힌트 20 : 영양소 큐브 카드와 지시약 카드를 조합하여 음식물의 종류를 알아야 한다. 조합하여 플레이칸에 적어보자. (지시약 - 큐브 순으로 적을 것)";
+                hintText += "<br>추가 힌트 20: ??";
+                break;
+            case '15':
+                hintText = "힌트 15 : 정체를 알게 된 소화액에 알맞은 견출지를 붙이자. 조합하여 플레이칸에 적어야 한다.";
+                hintText += "<br>추가 힌트 15: ??";
+                break;
+            default:
+                hintText = "해당하는 숫자의 힌트가 없습니다.";
+        }
+        $('#hint_output').html(hintText);
+    }
+
+    function displayPlay() {
+        const playInput = $('#play_input').val();
+        let playOutput = '';
+
+
+
+        switch (playInput) {
+            case 'MgKr':
+                playOutput = "<p>도끼로 창문을 부스고 1층 과학실로 입장했습니다.</p>";
+                playOutput = "<img src='1층과학실.png' alt='KrMg' style='width: 100%; height: auto;'>";
+                break;
+            case 'RbRa':
+                playOutput = "<p>용액이 보라색으로 변했다.</p>";
+                break;
+            case 'FrSr':
+                playOutput = "<p>용액이 선홍색으로 변했다.</p>";
+                break;
+            case 'CsBa':
+                playOutput = "<p>용액이 청람색으로 변했다.</p>";
+                break;
+            case 'RbBa':
+            case 'RbSr':
+            case 'FrRa':
+            case 'FrBa':
+            case 'CsRa':
+            case 'CsSr':
+                playOutput = "<p>아무런 변화가 일어나지 않았다.</p>";
+                break;
+            case 'HeLi':
+                playOutput = "<p>2,3 카드를 버리세요.</p>";
+                openPopup('https://www.youtube.com/embed/9QnqbH3prvU');
+                break;
+            case 'BC':
+            case 'CB':
+                playOutput = "모스부호표를 해독하세요";
+                break;
+            case 'OXe':
+                playOutput = "좀비가 나타났습니다.";
+                playOutput = "<img src='좀비.png' style='width: 100%; height: auto;'>";
+                alert('좀비가 나타났습니다. 생명이 1개 깎입니다.');
+                lives--;
+                updateLives();
+                break;
+            default:
+                playOutput = "<br><p>잘못된 단어입니다. 대소문자를 구분해주세요.</p>";
+        }
+        /*
+                if (playInput === 'OXe') {
+                    lives--;
+                    if (lives === 0) {
+                        alert('Game Over');
+                    } else {
+                        playOutput = "<img src='좀비.png' style='width: 100%; height: auto;'>";
+                        
+                    }
+                    updateLives();
+                    return;
+                }
+        */
+        $('#play_output').html(playOutput);
+    }
+
+    function openPopup(url) {
+        const popupWidth = 560;
+        const popupHeight = 315;
+        const left = (screen.width - popupWidth) / 2;
+        const top = (screen.height - popupHeight) / 2;
+
+        window.open(url, 'popup', `width=${popupWidth},height=${popupHeight},top=${top},left=${left}`);
+    }
+
+    function startStopwatch(duration, display) {
+        var timer = duration, minutes, seconds;
+        setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.textContent = minutes + ":" + seconds;
+
+            if (--timer % 300 === 0) { // 매 10분마다 실행
+                alert('좀비가 나타났습니다. 생명이 1개 깎입니다.');
+                lives--;
+                updateLives();
+                if (lives === 0) {
+                    alert('Game Over');
+                    clearInterval(this);
+                }
+            }
+
+            if (timer < 0) {
+                display.textContent = "시간이 종료됐습니다.";
+                clearInterval(this);
+            }
+        }, 1000);
+    }
+
+
+    window.onload = function () {
+        var oneHour = 60 * 60,
+            display = document.querySelector('#time');
+        startStopwatch(oneHour, display);
+        updateLives();
+    };
+
+</script>
+
+<body>
+    <header class="p-3 text-bg-dark">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                    <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap">
+                        <use xlink:href="#bootstrap"></use>
+                    </svg>
+                </a>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li><a href="#" class="nav-link px-2 text-danger">Mystery Lab</a></li>
+                    <li><a href="#" class="nav-link px-2 text-white">도움말</a></li>
+                    <li><a href="#" class="nav-link px-2 text-white">제작진</a></li>
+                    <div class="nav-link px-2 text-white">남은 생명</div>
+                    <div class="lives" id="lives"></div>
+                    <div class="nav-link px-2 text-white">소화제</div>
+                    <i class="bi bi-capsule px-2 text-white"></i>
+                    <i class="bi bi-capsule px-2 text-white"></i>
+                </ul>
+
+                <audio src="bgm.weba" autoplay controls></audio>
+
+            </div>
+        </div>
+    </header>
+    <div class="image"></div>
+    <div class="main">
+        <div class="p-5 mb-4 bg-body-tertiary rounded-3">
+            <div class="container-fluid py-5">
+                <h1 class="display-5 fw-bold">소나중 미스터리</h1>
+                <p class="col-md-8 fs-4">일단 연구소에서 지시한 대로 소나중학교에 도착했다. 다행히 밖으로 나온 좀비는 없는 것 같다. 다만 간헐적으로 들리는 짐승의 울음소리 같은
+                    것들이 저 안에서 무슨 일이 일어나고 있는지 짐작하게 해 줄 뿐이다. 연구소로 왔던 신호 내용을 보면, 시간이 여유롭지 않을 것 같다.
+                    빨리 학교 안으로 들어가 저 안에서 일어나고 있는 일을 파악하고 이를 해결해야 한다. 그러기 위해서는 과학 선생님이어디 있는지를 알아야 하는데,
+                    한 눈에 단서를 알 수 있도록 했다고 하니 우선 건물을 살펴 보자. 그런데, 저게 뭐지? </p>
+                <button onclick="openclose('play')" type="button" class="btn btn-outline-light">플레이</button>
+                <button onclick="openclose('hint')" type="button" class="btn btn-outline-light">힌트</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="play" id="play">
+        <h3> 플레이칸</h3>
+        <h4> 알파벳을 입력하세요. (대소문자 구분) </h4>
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="play_input" placeholder="플레이칸">
+            <label for="floatingInput">알파벳을 입력하세요. (대소문자 구분) </label>
+        </div>
+        <button onclick="displayPlay()" type="button" class="btn btn-outline-light">확인</button>
+        <div id="play_output"></div>
+    </div>
+
+    <div class="hint" id="hint">
+        <h3> 힌트</h3>
+        <h4> 숫자를 입력하세요. </h4>
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="hint_input" placeholder="힌트칸">
+            <label for="floatingInput">숫자를 입력하세요. </label>
+        </div>
+        <button onclick="displayHint()" type="button" class="btn btn-outline-light">확인</button>
+        <div id="hint_output"></div>
+    </div>
+    <div><br><br><br><br><br><br><br><br><br></div>
+    <div class="stopwatch-container">
+        <div class="circle">
+            <div class="time" id="time">60:00</div>
+        </div>
+    </div>
+</body>
+
+</html>
